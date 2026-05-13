@@ -48,7 +48,7 @@ public class StockController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // DELETE /api/stock/{id} -> Eliminar stock
+    // DELETE /api/stock/{id} -> Eliminar stock.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (stockService.obtenerPorId(id).isEmpty()) {
