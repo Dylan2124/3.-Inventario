@@ -20,7 +20,11 @@ public class StockController {
 
     // GET /api/stock -> Obtener todos los registros de stock
     @GetMapping
-    public ResponseEntity<List<StockResponseDTO>> obtenerTodos() {
+    public ResponseEntity<?> obtenerTodos() {
+        List<StockResponseDTO> lista = stockService.obtenerTodos();
+        if (lista.isEmpty()){
+            return ResponseEntity.ok("No se encontraron stocks");
+        }
         return ResponseEntity.ok(stockService.obtenerTodos());
     }
 
