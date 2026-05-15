@@ -29,4 +29,5 @@ public class MovimientoInventario {
 
     @Column(name = "fecha_movimiento")
     private LocalDateTime fechaMovimiento;
+
 }
