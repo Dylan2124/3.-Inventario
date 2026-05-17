@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/stock")
@@ -25,15 +27,20 @@ public class StockController {
         if (lista.isEmpty()){
             return ResponseEntity.ok("No se encontraron stocks");
         }
-        return ResponseEntity.ok(stockService.obtenerTodos());
+        return ResponseEntity.ok(lista);
     }
 
     // GET /api/stock/{id} -> Obtener uno por ID
     @GetMapping("/{id}")
-    public ResponseEntity<StockResponseDTO> obtenerPorId(@PathVariable Long id) {
-        return stockService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        Optional<StockResponseDTO> stock = stockService.obtenerPorId(id);
+
+        if (stock.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "No se encontró el registro de stock con ID: " + id));
+        }
+
+        return ResponseEntity.ok(stock.get());
     }
 
     // POST /api/stock -> Guardar nuevo stock
@@ -44,21 +51,25 @@ public class StockController {
 
     // PUT /api/stock/{id} -> Actualizar stock existente
     @PutMapping("/{id}")
-    public ResponseEntity<StockResponseDTO> actualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody StockRequestDTO dto) {
-        return stockService.actualizar(id, dto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody StockRequestDTO dto) {
+        Optional<StockResponseDTO> actualizado = stockService.actualizar(id, dto);
+
+        if (actualizado.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "No se puede actualizar. No existe el registro de stock con ID: " + id));
+        }
+
+        return ResponseEntity.ok(actualizado.get());
     }
 
-    // DELETE /api/stock/{id} -> Eliminar stock.
+    // DELETE /api/stock/{id} -> Eliminar stock
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         if (stockService.obtenerPorId(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "No se puede eliminar. No existe el registro de stock con ID: " + id));
         }
         stockService.eliminar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("mensaje", "El registro de stock con ID " + id + " se eliminó con éxito."));
     }
 }
