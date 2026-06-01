@@ -71,7 +71,7 @@ public class StockService {
 
                 NotificacionRequestDTO aviso = new NotificacionRequestDTO(
                         1L,
-                        0L,
+                        1L,
                         "INFO_INVENTARIO",
                         "Se actualizó el stock del producto " + actualizado.getIdProducto() + ". Cantidad disponible: " + actualizado.getCantidadDisponible()
                 );
