@@ -1,0 +1,33 @@
+spring:
+  application:
+    # IMPORTANTE: Este es el nombre que buscará el Gateway (lb://ms-inventario)
+    name: ms-inventario
+
+  # Configuración de tu BD
+  datasource:
+    url: jdbc:mysql://localhost:3306/inventario_db?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password: ""
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8083  # Puerto original
+
+# CONFIGURACIÓN DE EUREKA
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
